@@ -75,31 +75,47 @@ let d = x*y*t
 return rgb(x+y^6+100, d-40000*1.12, d-52000*0.5);
 </textarea>
 </div>
-    <style>
-    canvas { 
-        image-rendering: pixelated;
-    } 
-
+<style>
+    /* Общие стили */
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Отключаем прокрутку на всей странице */
+      height: 100%;
+    }
+  
+    canvas {
+      image-rendering: pixelated;
+    }
+  
     .center {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        gap: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      gap: 10px;
+      box-sizing: border-box; /* Учитываем padding и border в размерах */
     }
-
+  
     canvas, textarea {
-        width: 500px;
-        height: 500px;
-        resize: none;
+      width: 500px;
+      height: 500px;
+      resize: none;
+      box-sizing: border-box; /* Учитываем padding и border в размерах */
     }
-
+  
+    /* Стили для маленьких экранов */
     @media (max-width: 1100px) {
-        .center {
-            flex-direction: column;
-        }
+      .center {
+        flex-direction: column;
+      }
+  
+      canvas, textarea {
+        width: 90vw; 
+        height: 90vh; 
+      }
     }
-    </style>
+  </style>
     <script>
         const canvas = document.getElementById('canvas');
         let w = 50;
