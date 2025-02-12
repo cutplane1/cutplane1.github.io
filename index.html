@@ -14,8 +14,16 @@
             return `rgb(${r}, ${g}, ${b})`;
         }
 
+        function rgba(r, g, b, a) {
+            return `rgba(${r}, ${g}, ${b}, ${a})`;
+        }
+
         function hsl(h, s, l) {
             return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+
+        function hsla(h, s, l, a) {
+            return `hsla(${h}, ${s}%, ${l}%, ${a})`;
         }
 
         function one(x, f) {
@@ -52,7 +60,7 @@
 <div class="center">
 <canvas id="canvas"></canvas>
 <textarea name="code" id="code">
-//probably i should learn CSS...
+//probably i should learn CSS..."
 
 //press ctrl + enter for update
 return rgb(10, 5*(y+10), 180);
