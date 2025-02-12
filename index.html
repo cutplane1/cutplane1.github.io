@@ -18,13 +18,16 @@
             return `hsl(${h}, ${s}%, ${l}%)`;
         }
 
-        function one(x, f) {
-            let a = f(x, x, x);
-            return a;
-        }
-
         function rand(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function one(x, f, l = false) {
+            if (l) {
+                return f(x+rand(-10, 10),x+rand(-10, 10),x+rand(-10, 10));
+            } else {
+                return f(x,x,x);
+            }
         }
 
         function sin(x) {
@@ -56,11 +59,20 @@
 
 //press ctrl + enter for update
 // x, y and t (timer that goes from 0 to 60 and back) are available
+
 if ((x > 10 && x < 40) && (y > 10 && y < 40)) {
-return rgb(sin(x+t)*100, cos(y+t)*100, 0);
+    return rgb(sin(x+t)*100, cos(y+t)*100, 0);
+}
+
+if(x < 11) {
+    return one(y^x^t*0.5, hsl)
+}
+
+if(y < 11) {
+    return one(x*8-100, rgb, true)
 }
 let d = x*y*t
-return rgb(x+y^6+100, d-40000, d-52000);
+return rgb(x+y^6+100, d-40000*1.12, d-52000*0.5);
 </textarea>
 </div>
     <style>
