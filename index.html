@@ -76,28 +76,28 @@ return rgb(x+y^6+100, d-40000*1.12, d-52000*0.5);
 </textarea>
 </div>
     <style>
-    /* css written by llm lmao */
-    #canvas, #code {
-        width: 400px;
-        height: 400px;
-        border: 1px solid black;
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
-        resize: none;
-        vertical-align: top;
-    }
-    /* end of llm css */
     canvas { 
         image-rendering: pixelated;
     } 
 
     .center {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        -webkit-transform: translate(-50%, -50%);
-        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        gap: 10px;
+    }
+
+    canvas, textarea {
+        width: 500px;
+        height: 500px;
+        resize: none;
+    }
+
+    @media (max-width: 1100px) {
+        .center {
+            flex-direction: column;
+        }
     }
     </style>
     <script>
