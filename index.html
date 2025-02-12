@@ -52,15 +52,15 @@
 <div class="center">
 <canvas id="canvas"></canvas>
 <textarea name="code" id="code">
-//probably i should learn CSS..."
+//probably i should learn CSS...
 
 //press ctrl + enter for update
-return rgb(10, 5*(y+10), 180);
-
-
-//return rgb(9, 10*y, cos(x)/sin(y)*100);//corrupt gpu effect
-//return hsl(rand(sin(x-y), 100), rand(sin(x-y), 100), (x*y*0.4)*0.5);//flashlight
-//return rgb(x+2*100, x ** 1.7, 266);//whatever    
+// x, y and t (timer that goes from 0 to 60 and back) are available
+if ((x > 10 && x < 40) && (y > 10 && y < 40)) {
+return rgb(sin(x+t)*100, cos(y+t)*100, 0);
+}
+let d = x*y*t
+return rgb(x+y^6+100, d-40000, d-52000);
 </textarea>
 </div>
     <style>
@@ -87,13 +87,6 @@ return rgb(10, 5*(y+10), 180);
         -webkit-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
     }
-
-    @media (max-width: 600px) {
-        #canvas, #code {
-            width: 100%;
-            height: 100%;
-        }
-    }
     </style>
     <script>
         const canvas = document.getElementById('canvas');
@@ -108,20 +101,35 @@ return rgb(10, 5*(y+10), 180);
             ctx.fillRect(x, y, 1, 1);
         }
         const code = document.getElementById('code');
+        let t = 0;
+        let latch = false;
         function loop(draw) {
+            if (t > 60) {
+                latch = true;
+            }
+            if (t < 0) {
+                latch = false;
+            }
+            if (latch) {
+                t -= 1;
+            } else {
+                t += 1;
+            }
+
             ctx.clearRect(0, 0, w, h);
             for (let x = 0; x < w; x++) {
                 for (let y = 0; y < h; y++) {
-                    fill_pixel(x, y, draw(x, y));
+                    fill_pixel(x, y, draw(x, y, t));
                 }
             }
+
         }
         let f = new Function("x", "y", code.value);
         let ob = setInterval(loop, 1000 / 30, f);
         document.body.addEventListener('keydown', (event) => { 
             if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
                 clearInterval(ob);
-                f = new Function("x", "y", code.value);
+                f = new Function("x", "y", "t", code.value);
                 ob = setInterval(loop, 1000 / 30, f);
             }
         });
