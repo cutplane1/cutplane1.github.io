@@ -14,12 +14,13 @@
             return `rgb(${r}, ${g}, ${b})`;
         }
 
-        function rgba(r, g, b, a) {
-            return `rgba(${r}, ${g}, ${b}, ${a})`;
-        }
-
         function hsl(h, s, l) {
             return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+
+        function one(x, f) {
+            let a = f(x, x, x);
+            return a;
         }
 
         function rand(min, max) {
