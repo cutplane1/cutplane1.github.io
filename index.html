@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        //return rgb(9, 10*y, cos(x)/sin(y)*100); // corrupt gpu effect
+        //return hsl(rand(sin(x-y), 100), rand(sin(x-y), 100), (x*y*0.4)*0.5); // flashlight
+        //return rgb(x+2*100, x ** 1.7, 266); // whatever
+
+        // function shortcuts and helpers
+        function rgb(r, g, b) {
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        function rgba(r, g, b, a) {
+            return `rgba(${r}, ${g}, ${b}, ${a})`;
+        }
+
+        function hsl(h, s, l) {
+            return `hsl(${h}, ${s}%, ${l}%)`;
+        }
+
+        function rand(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function sin(x) {
+            return Math.sin(x);
+        }
+
+        function cos(x) {
+            return Math.cos(x);
+        }
+
+        function tan(x) {
+            return Math.tan(x);
+        }
+
+        function log(x) {
+            return Math.log(x);
+        }
+    </script>
+</head>
+<body>
+<div class="center">
+<canvas id="canvas"></canvas>
+<textarea name="code" id="code">
+return rgb(9, 10*y, 200);
+</textarea>
+<br>
+<button id="run">run</button>
+</div>
+    <style>
+    /* css written by llm lmao */
+    #canvas, #code {
+        width: 400px;
+        height: 400px;
+        border: 1px solid black;
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        resize: none;
+        vertical-align: top;
+    }
+    /* end of llm css */
+
+    canvas { 
+        image-rendering: optimizeSpeed; 
+    } 
+
+    .center {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+    </style>
+    <script>
+        const canvas = document.getElementById('canvas');
+        let w = 50;
+        let h = 50;
+        canvas.width = w;
+        canvas.height = h;
+
+        const ctx = canvas.getContext('2d');
+        function fill_pixel(x, y, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, 1, 1);
+        }
+        const code = document.getElementById('code');
+        const run = document.getElementById('run');
+        function loop(draw) {
+            ctx.clearRect(0, 0, w, h);
+            for (let x = 0; x < w; x++) {
+                for (let y = 0; y < h; y++) {
+                    fill_pixel(x, y, draw(x, y));
+                }
+            }
+        }
+        let f = new Function("x", "y", code.value);
+        let ob = setInterval(loop, 1000 / 30, f);
+        run.addEventListener('click', () => {
+            clearInterval(ob);
+            f = new Function("x", "y", code.value);
+            ob = setInterval(loop, 1000 / 30, f);
+        });
+    </script>
+</body>
+</html>
