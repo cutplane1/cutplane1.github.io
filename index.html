@@ -51,10 +51,14 @@
 <div class="center">
 <canvas id="canvas"></canvas>
 <textarea name="code" id="code">
-return rgb(10, 5*Math.abs(y+10), 200);
+//press ctrl + enter for update
+return rgb(10, 5*(y+10), 180);
+
+
+//return rgb(9, 10*y, cos(x)/sin(y)*100);//corrupt gpu effect
+//return hsl(rand(sin(x-y), 100), rand(sin(x-y), 100), (x*y*0.4)*0.5);//flashlight
+//return rgb(x+2*100, x ** 1.7, 266);//whatever    
 </textarea>
-<br>
-<button id="run">run</button>
 </div>
     <style>
     /* css written by llm lmao */
@@ -69,7 +73,16 @@ return rgb(10, 5*Math.abs(y+10), 200);
         vertical-align: top;
     }
     /* end of llm css */
-
+    #code {
+        width: 500px;
+        height: 400px;
+    }
+    @media (max-width: 1800px) {
+        #canvas, #code {
+            width: 400px;
+            height: 400px;
+        }
+    }
     canvas { 
         image-rendering: optimizeSpeed; 
     } 
@@ -95,7 +108,6 @@ return rgb(10, 5*Math.abs(y+10), 200);
             ctx.fillRect(x, y, 1, 1);
         }
         const code = document.getElementById('code');
-        const run = document.getElementById('run');
         function loop(draw) {
             ctx.clearRect(0, 0, w, h);
             for (let x = 0; x < w; x++) {
@@ -106,10 +118,12 @@ return rgb(10, 5*Math.abs(y+10), 200);
         }
         let f = new Function("x", "y", code.value);
         let ob = setInterval(loop, 1000 / 30, f);
-        run.addEventListener('click', () => {
-            clearInterval(ob);
-            f = new Function("x", "y", code.value);
-            ob = setInterval(loop, 1000 / 30, f);
+        document.body.addEventListener('keydown', (event) => { 
+            if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+                clearInterval(ob);
+                f = new Function("x", "y", code.value);
+                ob = setInterval(loop, 1000 / 30, f);
+            }
         });
     </script>
 </body>
