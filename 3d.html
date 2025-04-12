@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js from CDN</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+        }
+        canvas { 
+            display: block; 
+        }
+        #text-panel {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+
+            width: 300px;
+        }
+        #text-panel textarea {
+            width: 100%;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js will be loaded from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <!-- Optional OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <div id="text-panel">
+        <textarea placeholder="Enter text here...">
+if(x == 0 || y == 0 || x == 4 || y == 4) {
+        return BLACK;
+    }
+if(x == 1 || y == 1 || x == 3 || y == 3) {
+        return RED;
+    }
+if (x==2) {
+        return WHITE;
+}
+        </textarea>
+        <button id="run">run</button>
+        <button id="toggle-grid">off grid</button>
+    </div>
+    <script>
+        function run () {
+            code = document.getElementsByTagName("textarea")[0].value;
+            let f = new Function("x", "y", "z", code);
+            draw_cubes(f, size);
+        }
+
+        let grid, x, y, z, size, color_or_nothing;
+        size = 5;
+
+        document.getElementById("run").addEventListener("click", function() {
+            run();
+        })
+
+        const RED = 0xff0000;
+        const GREEN = 0x00ff00;
+        const BLUE = 0x0000ff;
+        const WHITE = 0xffffff;
+        const BLACK = 0x000000;
+
+
+        function toggleGrid() {
+        if (grid.parent) {
+            scene.remove(grid);
+            document.getElementById("toggle-grid").innerHTML = "on grid";
+        }else {
+            scene.add(grid);
+            document.getElementById("toggle-grid").innerHTML = "off grid";
+        }
+        }
+        function spawn_cube(x, y, z, color) {
+            const cube_geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshBasicMaterial({ color: color });
+            const cube = new THREE.Mesh(cube_geometry, material);
+            const offset = (size - 1) / 2;
+            cube.position.set(x - offset, y - offset, z - offset);
+            scene.add(cube);
+        }
+        function createCubeGrid(gridSize, cubeSize) {
+            const group = new THREE.Group(); // Group to hold all cubes
+            const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+            
+            for (let x = 0; x < gridSize; x++) {
+                for (let y = 0; y < gridSize; y++) {
+                    for (let z = 0; z < gridSize; z++) {
+                        const posX = (x - (gridSize-1)/2);
+                        const posY = (y - (gridSize-1)/2);
+                        const posZ = (z - (gridSize-1)/2);
+                        
+                        const edges = new THREE.EdgesGeometry(geometry);
+                        const material = new THREE.LineBasicMaterial({ 
+                            color: 0xffffff,
+                            transparent: true,
+                            opacity: 0.8
+                        });
+                        
+                        const wireframe = new THREE.LineSegments(edges, material);
+                        wireframe.position.set(posX, posY, posZ);
+                        group.add(wireframe); // Add to group (not scene yet)
+                    }
+                }
+            }
+            return group; // Return the group (not automatically added to scene)
+        }
+        // Your Three.js code goes here
+        let scene, camera, renderer;
+
+        function draw_cubes(f, grid_size) {
+            const toRemove = [];
+    scene.children.forEach(child => {
+        if (child !== grid) {
+            toRemove.push(child);
+        }
+    });
+    toRemove.forEach(child => scene.remove(child));
+            size = grid_size;
+            for (let x = 0; x < size; x++) {
+                for (let y = 0; y < size; y++) {
+                    for (let z = 0; z < size; z++) {
+                        color_or_nothing = f(x, y, z);
+                        if (color_or_nothing != null) {
+                            spawn_cube(x, y, z, color_or_nothing);
+                        }
+                    }
+                }
+            }
+        }
+        function init() {
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x222222);
+            
+            // Create camera
+            camera = new THREE.PerspectiveCamera(
+                75, 
+                window.innerWidth / window.innerHeight, 
+                0.1, 
+                1000
+            );
+            camera.position.z = 15;
+            
+            // Create renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+            
+            grid = createCubeGrid(size,1)
+            scene.add(grid);
+            document.getElementById("toggle-grid").addEventListener("click", toggleGrid);
+
+            
+            // Add orbit controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.update();
+            
+            // Add event listener for window resize
+            window.addEventListener('resize', onWindowResize);
+            
+            animate();
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+        init();
+        run();
+    </script>
+</body>
+</html>
