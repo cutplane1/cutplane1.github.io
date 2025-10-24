@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>microblog</title>
+    <style>
+        .post {
+            border: 1px;
+            border-style: dashed;
+            margin-bottom: 10px;
+            margin-top: 10px;
+            border-color: dodgerblue;
+        }
+        p {
+            margin: 2px;
+        }
+        time {
+            margin-left: 2px;
+            font-size: smaller;
+            color: gray;
+        }
+        body {
+            max-width: 400px;
+            background: none transparent;
+            font-family: "MS P Gothic", sans-serif;
+        }
+    </style>
+</head>
+<body>
+<a href="https://cutplane.neocities.org">https://cutplane.neocities.org</a>
+<div class="post">
+<time>2025-10-20T17:53:27+00:00</time>
+<p>iframes suck</p>
+</div>
+<div class="post">
+<time>2025-10-20T08:14:20+00:00</time>
+<p>even simple tasks are hard for me</p>
+</div>
+<div class="post">
+<time>2025-10-20T07:15:24+00:00</time>
+<p>hello</p>
+</div>
+
+<script>
+    // if (window.self === window.top) {
+    //     const a = document.createElement("a");
+    //     a.href = "https://cutplane.neocities.org";
+    //     a.textContent = "https://cutplane.neocities.org";
+    //     document.body.insertBefore(a, document.body.firstChild);
+    // }
+    
+    function when(original_date) {
+        const ms = new Date() - original_date;
+        const sec = Math.floor(ms / 1000); 
+        const min = Math.floor(sec / 60);  
+        const hr  = Math.floor(min / 60);  
+        const day = Math.floor(hr / 24);  
+        const year = Math.floor(day / 365);
+        // if (diffSec < 60) return "just now";
+        if (sec < 60) return `${sec} seconds ago`;
+        if (min < 60) return `${min} minutes ago`;
+        if (hr < 24) return `${hr} hours ago`;
+        if (day === 1) return "yesterday";
+        if (day < 365) return `${day} days ago`;
+        return `${year} years ago`;
+    }
+
+    const dates = document.querySelectorAll('time');
+
+    dates.forEach(el => {
+    const o = el.innerText;
+    const n = when(new Date(o)) + ` (${o})`;
+    el.innerText = n;
+    });
+</script>
+</body>
+</html>
