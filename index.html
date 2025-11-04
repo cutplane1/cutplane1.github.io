@@ -81,13 +81,6 @@
 </div>
 
 <script>
-    // if (window.self === window.top) {
-    //     const a = document.createElement("a");
-    //     a.href = "https://cutplane.neocities.org";
-    //     a.textContent = "https://cutplane.neocities.org";
-    //     document.body.insertBefore(a, document.body.firstChild);
-    // }
-    
     function when(original_date) {
         const ms = new Date() - original_date;
         const sec = Math.floor(ms / 1000); 
@@ -98,9 +91,11 @@
         // if (diffSec < 60) return "just now";
         if (sec < 60) return `${sec} seconds ago`;
         if (min < 60) return `${min} minutes ago`;
+        if (hr === 1) return `hour ago`;
         if (hr < 24) return `${hr} hours ago`;
         if (day === 1) return "yesterday";
         if (day < 365) return `${day} days ago`;
+        if (year === 1) return `$year ago`;
         return `${year} years ago`;
     }
 
