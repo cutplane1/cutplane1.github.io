@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel sort</title>
+    <style>
+        img {
+            max-width: 500px;
+        }
+
+        canvas {
+            max-width: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <input type="file" accept="image/*" id="picker">
+    <br>
+    <img id="orig">
+    <img id="preview">
+    <canvas id="result">
+        <script>
+            function get_pixels() {
+                const c = document.createElement('canvas');
+                let img = document.getElementById('orig');
+                c.width = img.width;
+                c.height = img.height;
+                const ctx = c.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                return ctx.getImageData(0, 0, img.width, img.height);
+            }
+
+            // https://github.com/solst-ice/pxl-srt/blob/main/src/utils/imageProcessing.js
+            function sort(img) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                ctx.drawImage(img, 0, 0);
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = [];
+
+                for (let i = 0; i < imageData.data.length; i += 4) {
+                    const r = imageData.data[i];
+                    const g = imageData.data[i + 1];
+                    const b = imageData.data[i + 2];
+                    const a = imageData.data[i + 3];
+
+                    const luminosity = (r + g + b) / 3;
+                    const threshold = 1.2;
+                    let colorGroup;
+
+                    if (Math.abs(r - g) < 10 && Math.abs(g - b) < 10 && Math.abs(r - b) < 10) {
+                        colorGroup = 0;
+                    } else if (r > g * threshold && r > b * threshold) {
+                        colorGroup = 1; // red
+                    } else if (g > r * threshold && g > b * threshold) {
+                        colorGroup = 2; // green
+                    } else if (b > r * threshold && b > g * threshold) {
+                        colorGroup = 3; // blue
+                    } else if (r > b && g > b) {
+                        colorGroup = 4; // yellow
+                    } else if (r > g && b > g) {
+                        colorGroup = 5; // magenta
+                    } else if (g > r && b > r) {
+                        colorGroup = 6; // cyan
+                    } else {
+                        colorGroup = 7; // mixed
+                    }
+
+                    pixels.push({ r, g, b, a, colorGroup, luminosity });
+                }
+
+                pixels.sort((p1, p2) =>
+                    p1.colorGroup !== p2.colorGroup
+                        ? p1.colorGroup - p2.colorGroup
+                        : p2.luminosity - p1.luminosity
+                );
+
+                for (let i = 0; i < pixels.length; i++) {
+                    const p = pixels[i];
+                    imageData.data[i * 4] = p.r;
+                    imageData.data[i * 4 + 1] = p.g;
+                    imageData.data[i * 4 + 2] = p.b;
+                    imageData.data[i * 4 + 3] = p.a;
+                }
+
+                return imageData;
+            };
+
+
+            document.getElementById('picker').addEventListener('change', e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const img = document.getElementById('orig');
+                img.src = URL.createObjectURL(file);
+
+                img.onload = () => {
+                    let sorted = sort(img);
+
+                    let can = document.getElementById('result');
+                    can.width = img.width;
+                    can.height = img.height;
+                    let ctx = can.getContext('2d');
+                    ctx.putImageData(sorted, 0, 0);
+                };
+            });
+
+        </script>
+</body>
+
+</html>

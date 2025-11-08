@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image resize</title>
+    <style>
+    img {
+        width: 400px;
+        display: inline-block;
+    }
+
+    canvas {
+        width: 400px;
+        display: inline-block;
+        image-rendering: pixelated;
+    }
+    </style>
+</head>
+
+<body>
+    <input type="file" accept="image/*" id="picker">
+    <br>
+    <input style="display:inline-block;" type="range" id="px" name="px" min="2" max="30" onchange="document.getElementById('o').innerText = this.value"><div style="display:inline-block;" id="o">2</div>
+    <br>
+    <button>resize</button>
+    <br>
+    <img id="c"></img>
+    <canvas id="canvas_res"></canvas>
+    <script>
+    let file = null
+    let img = null
+    document.getElementById('px').value = 2;
+    document.getElementById('picker').addEventListener('change', e => {
+        file = e.target.files[0];
+        if (!file) return;
+        img = document.getElementById('c');
+        img.src = URL.createObjectURL(file);
+    });
+
+    // document.getElementById('px').addEventListener('change', cb);
+    document.getElementsByTagName("button")[0].addEventListener("click",e => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            ctx.drawImage(img, 0, 0);
+
+            const canvas_res = document.getElementById('canvas_res');
+            const ctx_res = canvas_res.getContext('2d');
+
+            pix_size = parseInt(document.getElementById('o').innerText);
+            
+            canvas_res.width = canvas.width / pix_size;
+            canvas_res.height = canvas.height / pix_size;
+
+            for (let i = 0; i < canvas.width; i += pix_size) {
+                for (let j = 0; j < canvas.height; j += pix_size) {
+                    imgd = ctx.getImageData(i, j, 1, 1).data;
+                    ctx_res.fillStyle = `rgb(${imgd[0]}, ${imgd[1]}, ${imgd[2]})`;
+                    ctx_res.fillRect(i / pix_size, j / pix_size, 1, 1);
+                }
+            }
+    })
+
+    </script>
+</body>
+
+</html>
