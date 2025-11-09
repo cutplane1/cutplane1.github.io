@@ -24,7 +24,7 @@ def parse_args(args: list[str]):
     for arg in args:
         if arg.startswith("http") or arg.startswith("@"):
             if arg.startswith("@"):
-                arg = url + "/" + arg[1:]
+                arg = url + "/imgs/" + arg[1:]
             if arg.endswith(('.apng', '.png', '.avif', '.gif', '.jpg', '.jpeg', '.png', '.svg', '.webp')):
                 e.insert(0, f'<img src="{arg}"><br>')
             else:
