@@ -36,12 +36,9 @@
         }
     </style>
     <script>
+// include gen.js
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
-}
-
-function fmt(n) {
-    return n < 0 ? `(${n})` : `${n}`;
 }
 
 function mutate(n) {
@@ -54,7 +51,6 @@ function mutate(n) {
 }
 
 function walk(buf, skip_chance = 0.2) {
-
     return buf.replace(/\d+/g, (match) => {
         if (Math.random() < skip_chance) {
             return match;
