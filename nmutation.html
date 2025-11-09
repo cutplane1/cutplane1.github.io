@@ -76,7 +76,7 @@ function walk(buf, skip_chance = 0.2) {
                 } else {
                     val = input.value;
                 }
-                const result = walk(fmt(val));
+                const result = walk(val);
                 h1.classList.remove('rr-anim');
                 void h1.offsetWidth;
                 h1.classList.add('rr-anim');
