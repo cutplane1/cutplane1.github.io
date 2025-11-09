@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* center input */
+        body {
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: monospace;
+        }
+        input {
+            font-size: 24px;
+            width: 250px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 32px;
+        }
+
+        @keyframes rr {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(0, 0) rotate(60deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        .rr-anim {
+            animation: rr 0.1s ease-in-out;
+        }
+    </style>
+    <script>
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function fmt(n) {
+    return n < 0 ? `(${n})` : `${n}`;
+}
+
+function mutate(n) {
+    let a = getRandomInt(n) + 1;
+
+    switch (getRandomInt(2)) {
+        case 0: return `(${a} + ${n - a})`;
+        case 1: return `(${a+n} - ${a})`;
+    }
+}
+
+function walk(buf, skip_chance = 0.2) {
+
+    return buf.replace(/\d+/g, (match) => {
+        if (Math.random() < skip_chance) {
+            return match;
+        }
+        return mutate(parseInt(match));
+    });
+}
+
+    </script>
+</head>
+<body>
+    <input type="text" placeholder="enter your number">
+    <h1 hidden></h1>
+    <script>
+        const input = document.querySelector('input');
+        const h1 = document.querySelector('h1');
+        function upd(e) {
+            console.log(e);
+            let val;
+            if (e.key === 'Enter' || e.type === 'click') {
+                if (input.hidden) {
+                    val = h1.textContent;
+                } else {
+                    val = input.value;
+                }
+                const result = walk(fmt(val));
+                h1.classList.remove('rr-anim');
+                void h1.offsetWidth;
+                h1.classList.add('rr-anim');
+                input.hidden = true;
+                h1.hidden = false;
+                h1.textContent = result;
+            }
+        }
+        document.addEventListener('keydown', upd);
+        h1.addEventListener('click', upd);
+    </script>
+</body>
+</html>
