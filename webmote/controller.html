@@ -20,11 +20,8 @@
         };
 
         
-
         function orientation_event_handle(event) {
-            sensor_data.a = event.alpha;
-            sensor_data.b = event.beta;
-            sensor_data.g = event.gamma;
+            socket.send(JSON.stringify({ type: 'orientation', alpha: event.alpha, beta: event.beta, gamma: event.gamma }));
         }
 
         start_b.onclick = function(e) {
