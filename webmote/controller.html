@@ -12,8 +12,14 @@
         const start_b = document.getElementById('start_b');
         const calibrate_b = document.getElementById('calibrate_b');
 
-        const socket = new WebSocket('ws://192.168.0.110:8000');
-        const sensor_data = {a: 0, b: 0, g: 0};
+        const socket = new WebSocket(`ws://${window.location.host}`);
+        let latest_alpha = 0; 
+        let latest_beta = 0; 
+        let latest_gamma = 0;
+
+        let calibrated_alpha = 0;
+        let calibrated_beta = 0;
+        let calibrated_gamma = 0;
         
         socket.onopen = function() {
             console.log('WebSocket connection established');
@@ -21,20 +27,50 @@
 
         
         function orientation_event_handle(event) {
-            socket.send(JSON.stringify({ type: 'orientation', alpha: event.alpha, beta: event.beta, gamma: event.gamma }));
+            latest_alpha = event.alpha || 0;
+            latest_beta  = event.beta || 0;
+            latest_gamma = event.gamma || 0;
+            
+            let final_alpha = latest_alpha - calibrated_alpha;
+
+            if (final_alpha < 0) final_alpha += 360; 
+            if (final_alpha >= 360) final_alpha -= 360;
+
+            let final_beta  = latest_beta - calibrated_beta;
+            let final_gamma = latest_gamma - calibrated_gamma;
+
+            socket.send(JSON.stringify({
+                alpha: final_alpha, 
+                beta: final_beta, 
+                gamma: final_gamma 
+            }));
         }
 
         start_b.onclick = function(e) {
             console.log(socket);
-            socket.send(JSON.stringify({ type: 'init', message: 'Hello from the client!' }));
             console.log('start button clicked');
             calibrate_b.disabled = false;
-            // Request permission for iOS 13+ devices
+
             if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
                 console.log(DeviceMotionEvent.requestPermission());
             }
             window.addEventListener("deviceorientation", orientation_event_handle);
             console.log('deviceorientation event listener added');
+        };
+
+        calibrate_b.onclick = function() {
+            console.log('Calibrating... Setting current position as zero.');
+
+            calibrated_alpha = latest_alpha;
+            calibrated_beta = latest_beta;
+            calibrated_gamma = latest_gamma;
+
+            const originalText = calibrate_b.innerText;
+            calibrate_b.innerText = 'calibrated!';
+            
+            setTimeout(() => {
+                calibrate_b.innerText = originalText;
+            }, 1000);
         };
 
     </script>
