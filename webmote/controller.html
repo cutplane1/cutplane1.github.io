@@ -25,6 +25,7 @@
         }
 
         start_b.onclick = function(e) {
+            console.log(socket);
             socket.send(JSON.stringify({ type: 'init', message: 'Hello from the client!' }));
             console.log('start button clicked');
             calibrate_b.disabled = false;
