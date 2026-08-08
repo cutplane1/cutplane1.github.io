@@ -40,7 +40,7 @@
             let final_gamma = latest_gamma - calibrated_gamma;
 
             socket.send(JSON.stringify({
-                alpha: final_alpha, 
+                alpha: -final_alpha, 
                 beta: final_beta, 
                 gamma: final_gamma 
             }));
