@@ -25,7 +25,7 @@
         }
 
         start_b.onclick = function(e) {
-            // socket.send(JSON.stringify({ type: 'init', message: 'Hello from the client!' }));
+            socket.send(JSON.stringify({ type: 'init', message: 'Hello from the client!' }));
             console.log('start button clicked');
             calibrate_b.disabled = false;
             // Request permission for iOS 13+ devices
