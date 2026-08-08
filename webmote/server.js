@@ -8,7 +8,6 @@ Deno.serve((req) => {
     const { socket, response } = Deno.upgradeWebSocket(req);
 
     if (isScreen) {
-      // Screen client — only receives data
       socket.addEventListener("open", () => {
         screenSocket = socket;
         console.log("Screen connected");
