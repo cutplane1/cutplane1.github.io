@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="start_b">start</button>
+    <button id="calibrate_b" disabled>calibrate</button>
+    <script>
+        const start_b = document.getElementById('start_b');
+        const calibrate_b = document.getElementById('calibrate_b');
+
+        const socket = new WebSocket('ws://localhost:8000');
+        const sensor_data = {a: 0, b: 0, g: 0};
+        
+        socket.onopen = function() {
+            console.log('WebSocket connection established');
+        };
+
+        
+
+        function orientation_event_handle(event) {
+            sensor_data.a = event.alpha;
+            sensor_data.b = event.beta;
+            sensor_data.g = event.gamma;
+        }
+
+        start_b.onclick = function(e) {
+            // socket.send(JSON.stringify({ type: 'init', message: 'Hello from the client!' }));
+            console.log('start button clicked');
+            calibrate_b.disabled = false;
+            // Request permission for iOS 13+ devices
+            if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") {
+                console.log(DeviceMotionEvent.requestPermission());
+            }
+            window.addEventListener("deviceorientation", orientation_event_handle);
+            console.log('deviceorientation event listener added');
+        };
+
+    </script>
+</body>
+</html>
