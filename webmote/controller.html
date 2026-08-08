@@ -12,7 +12,7 @@
         const start_b = document.getElementById('start_b');
         const calibrate_b = document.getElementById('calibrate_b');
 
-        const socket = new WebSocket('ws://localhost:8000');
+        const socket = new WebSocket('ws://192.168.0.110:8000');
         const sensor_data = {a: 0, b: 0, g: 0};
         
         socket.onopen = function() {
